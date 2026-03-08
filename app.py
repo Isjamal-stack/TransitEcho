@@ -8,14 +8,14 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
 
-# --- 1. UI Setup ---
-st.set_page_config(page_title="TransitEcho | DS4CG 2026", layout="wide")
+# UI Setup
+st.set_page_config(page_title="TransitEcho", layout="wide")
 st.title("🚌 TransitEcho: Pioneer Valley AI Assistant")
 
-# --- 2. RAG Brain ---
+# RAG Brain
 @st.cache_resource
 def load_rag_system():
-    # Uses the data you processed in ingest.py
+    # Uses the data processed in ingest.py
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     vector_db = Chroma(persist_directory="data/chroma_db", embedding_function=embeddings)
     llm = Ollama(model="llama3")
@@ -29,11 +29,10 @@ def load_rag_system():
         ("human", "{input}"),
     ])
     
-    # Building the chain (Modular 2026 style)
+    #This builds the chain
     question_answer_chain = create_stuff_documents_chain(llm, prompt)
     return create_retrieval_chain(vector_db.as_retriever(), question_answer_chain)
 
-# --- 3. Execution ---
 try:
     rag_chain = load_rag_system()
     
